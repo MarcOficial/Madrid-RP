@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADRID RP · ERLC 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg: #060b14;
+  --bg-panel: #0d1826;
+  --bg-panel-2: #101f33;
+  --blue: #2e7de8;
+  --blue-light: #6fb3ff;
+  --cyan: #4fe0e8;
+  --amber: #ffb020;
+  --red: #ff4747;
+  --text: #eaf2ff;
+  --text-dim: #7c93b3;
+  --line: rgba(111,179,255,0.16);
+  --radius: 4px;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; }
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family:'Inter', sans-serif;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* scanline overlay */
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.015) 0px,
+    rgba(255,255,255,0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events:none;
+  z-index:200;
+  mix-blend-mode:overlay;
+}
+
+.mono{ font-family:'JetBrains Mono', monospace; }
+.display{ font-family:'Orbitron', sans-serif; }
+.tech{ font-family:'Rajdhani', sans-serif; }
+
+/* -------- top ticker -------- */
+.ticker-bar{
+  position:sticky; top:0; z-index:100;
+  background: #050a12;
+  border-bottom: 1px solid var(--line);
+  overflow:hidden;
+  height:34px;
+  display:flex;
+  align-items:center;
+}
+.ticker-track{
+  display:flex;
+  white-space:nowrap;
+  animation: scroll-left 32s linear infinite;
+}
+@keyframes scroll-left{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+.ticker-track span{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  color: var(--cyan);
+  padding: 0 28px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-right: 1px solid var(--line);
+}
+.ticker-track span::before{
+  content:'';
+  width:6px; height:6px;
+  border-radius:50%;
+  background: var(--cyan);
+  box-shadow:0 0 6px var(--cyan);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink{
+  0%,100%{ opacity:1; }
+  50%{ opacity:0.25; }
+}
+
+/* -------- hero -------- */
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: 100px 24px 80px;
+  overflow:hidden;
+}
+
+.radar-sweep{
+  position:absolute;
+  top:50%; left:50%;
+  width:1100px; height:1100px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(46,125,232,0.16) 8%, transparent 16%);
+  animation: spin 7s linear infinite;
+  z-index:0;
+}
+@keyframes spin{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+
+.grid-rings{
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  z-index:0;
+  opacity:0.5;
+}
+.grid-rings div{
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  border:1px solid var(--line);
+  border-radius:50%;
+}
+
+.hero-content{ position:relative; z-index:2; max-width:780px; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:'Rajdhani', sans-serif;
+  font-weight:600;
+  font-size:13px;
+  letter-spacing:0.35em;
+  color: var(--cyan);
+  border: 1px solid var(--line);
+  padding: 8px 18px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+  background: rgba(79,224,232,0.04);
+}
+.eyebrow .dot{
+  width:7px; height:7px; border-radius:50%;
+  background: var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+.hero h1{
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size: clamp(48px, 9vw, 108px);
+  line-height:0.98;
+  letter-spacing:0.01em;
+  background: linear-gradient(180deg, #ffffff 0%, var(--blue-light) 60%, var(--blue) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow: 0 0 60px rgba(46,125,232,0.35);
+}
+
+.hero .flag{ font-size: clamp(28px,5vw,44px); vertical-align:middle; }
+
+.hero-sub{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:600;
+  font-size: clamp(16px, 2.2vw, 20px);
+  letter-spacing:0.06em;
+  color: var(--text-dim);
+  margin-top:22px;
+  max-width:560px;
+  margin-left:auto; margin-right:auto;
+}
+
+.hero-desc{
+  margin-top:20px;
+  color: var(--text-dim);
+  font-size:15px;
+  line-height:1.7;
+  max-width:520px;
+  margin-left:auto; margin-right:auto;
+}
+
+.hero-ctas{
+  margin-top:44px;
+  display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+}
+
+.btn{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  text-decoration:none;
+  padding: 16px 32px;
+  border-radius: var(--radius);
+  display:inline-flex; align-items:center; gap:10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor:pointer; border:none;
+}
+.btn-primary{
+  background: linear-gradient(135deg, var(--blue), #1a4fb0);
+  color:#fff;
+  box-shadow: 0 0 0 1px rgba(111,179,255,0.3), 0 10px 30px -8px rgba(46,125,232,0.6);
+}
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 0 0 1px var(--cyan), 0 14px 34px -6px rgba(46,125,232,0.7); }
+.btn-ghost{
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover{ border-color: var(--blue-light); background: rgba(111,179,255,0.06); }
+
+.coords{
+  position:absolute;
+  bottom:28px; left:50%; transform:translateX(-50%);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  color: var(--text-dim);
+  z-index:2;
+  display:flex; gap:22px;
+  opacity:0.7;
+}
+
+/* -------- section shell -------- */
+section{ position:relative; padding: 110px 24px; }
+.section-inner{ max-width:1120px; margin:0 auto; }
+
+.section-head{ margin-bottom:56px; text-align:left; }
+.section-tag{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.15em;
+  color: var(--cyan);
+  display:block;
+  margin-bottom:14px;
+}
+.section-tag::before{ content:'// '; color:var(--blue-light); }
+.section-title{
+  font-family:'Orbitron', sans-serif;
+  font-weight:700;
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing:0.01em;
+}
+
+/* -------- corporaciones -------- */
+.corp-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:1px;
+  background: var(--line);
+  border:1px solid var(--line);
+}
+.corp-card{
+  background: var(--bg-panel);
+  padding: 30px 26px;
+  transition: background 0.25s ease;
+  position:relative;
+  overflow:hidden;
+}
+.corp-card:hover{ background: var(--bg-panel-2); }
+.corp-card:hover .corp-icon{ color:var(--cyan); border-color:var(--cyan); box-shadow:0 0 18px rgba(79,224,232,0.35); }
+
+.corp-code{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color: var(--text-dim);
+  letter-spacing:0.1em;
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:22px;
+}
+.corp-code::before{
+  content:'';
+  width:6px; height:6px; border-radius:50%;
+  background:#3ddc7a;
+  box-shadow:0 0 6px #3ddc7a;
+}
+
+.corp-icon{
+  width:44px; height:44px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color: var(--blue-light);
+  margin-bottom:18px;
+  transition: all 0.25s ease;
+}
+.corp-icon svg{ width:20px; height:20px; }
+
+.corp-name{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:700;
+  font-size:19px;
+  letter-spacing:0.01em;
+  margin-bottom:4px;
+}
+.corp-abbr{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  color: var(--text-dim);
+}
+
+/* -------- ofrecemos: systems panel -------- */
+.panel{
+  border:1px solid var(--line);
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+}
+.panel-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 18px 24px;
+  border-bottom:1px solid var(--line);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color: var(--text-dim);
+  letter-spacing:0.1em;
+}
+.panel-header .lights{ display:flex; gap:6px; }
+.panel-header .lights span{ width:8px; height:8px; border-radius:50%; background:var(--line); }
+.panel-header .lights span:nth-child(1){ background:var(--red); }
+.panel-header .lights span:nth-child(2){ background:var(--amber); }
+.panel-header .lights span:nth-child(3){ background:#3ddc7a; }
+
+.status-list{ list-style:none; }
+.status-list li{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 20px 24px;
+  border-bottom:1px solid var(--line);
+  font-family:'Rajdhani', sans-serif;
+  font-weight:600;
+  font-size:17px;
+}
+.status-list li:last-child{ border-bottom:none; }
+.status-ok{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:#3ddc7a;
+  letter-spacing:0.08em;
+  display:flex; align-items:center; gap:8px;
+}
+.status-ok::before{ content:''; width:6px; height:6px; border-radius:50%; background:#3ddc7a; box-shadow:0 0 6px #3ddc7a; }
+
+/* -------- buscamos: terminal -------- */
+.terminal{
+  border:1px solid var(--line);
+  background:#03060c;
+  border-radius: var(--radius);
+  overflow:hidden;
+}
+.terminal-bar{
+  display:flex; align-items:center; gap:8px;
+  padding:12px 18px;
+  border-bottom:1px solid var(--line);
+  background: var(--bg-panel);
+}
+.terminal-bar span{ width:9px; height:9px; border-radius:50%; }
+.terminal-bar span:nth-child(1){ background:var(--red); }
+.terminal-bar span:nth-child(2){ background:var(--amber); }
+.terminal-bar span:nth-child(3){ background:#3ddc7a; }
+.terminal-bar .path{
+  margin-left:12px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:var(--text-dim);
+}
+.terminal-body{
+  padding: 30px 28px 34px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:14px;
+  line-height:2.1;
+  color: var(--cyan);
+}
+.terminal-body .prompt{ color: var(--blue-light); }
+.terminal-body .req{ color: var(--text); }
+.terminal-body .req::before{ content:'✓ '; color:#3ddc7a; }
+.cursor{
+  display:inline-block; width:8px; height:16px;
+  background: var(--cyan);
+  vertical-align:middle;
+  animation: blink 1s steps(1) infinite;
+}
+
+/* -------- final broadcast -------- */
+.broadcast{
+  position:relative;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding: 90px 24px;
+  text-align:center;
+  overflow:hidden;
+}
+.broadcast::before{
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(46,125,232,0.16), transparent 60%);
+  z-index:0;
+}
+.broadcast-tag{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.2em;
+  color: var(--amber);
+  border:1px solid rgba(255,176,32,0.35);
+  background: rgba(255,176,32,0.06);
+  display:inline-flex; align-items:center; gap:10px;
+  padding:8px 18px; border-radius:100px;
+  margin-bottom:30px;
+  position:relative; z-index:1;
+}
+.broadcast-tag .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); animation:blink 1.2s ease-in-out infinite; }
+
+.broadcast h2{
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size: clamp(30px, 5vw, 54px);
+  position:relative; z-index:1;
+  margin-bottom:18px;
+}
+.broadcast p{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:600;
+  font-size:18px;
+  color: var(--text-dim);
+  position:relative; z-index:1;
+  max-width:520px;
+  margin: 0 auto 40px;
+}
+.discord-link{
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  color: var(--blue-light);
+  display:block;
+  margin-top:20px;
+  position:relative; z-index:1;
+}
+
+/* -------- footer -------- */
+footer{
+  padding: 34px 24px;
+  text-align:center;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color: var(--text-dim);
+  letter-spacing:0.08em;
+}
+
+/* reveal on scroll */
+.reveal{ opacity:0; transform:translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible{ opacity:1; transform:translateY(0); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important; }
+}
+
+@media (max-width:640px){
+  section{ padding:80px 20px; }
+  .hero{ padding-top:80px; }
+  .coords{ flex-direction:column; gap:4px; align-items:center; }
+}
+</style>
+</head>
+<body>
+
+<div class="ticker-bar">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<section class="hero">
+  <div class="radar-sweep"></div>
+  <div class="grid-rings" id="rings"></div>
+  <div class="hero-content">
+    <div class="eyebrow"><span class="dot"></span> COMUNIDAD OFICIAL · ERLC 2026</div>
+    <h1>MADRID <span style="-webkit-text-fill-color:var(--blue-light); text-shadow:0 0 40px rgba(111,179,255,0.5);">RP</span></h1>
+    <p class="hero-sub">Comunidad de ERLC ambientada en la Comunidad de Madrid <span class="flag">🇪🇸</span></p>
+    <p class="hero-desc">Creada para ofrecer una experiencia organizada, activa y divertida. Siete corporaciones, coordinación real y una comunidad que se toma en serio el rol.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="https://discord.gg/9mbXYtEP9" target="_blank" rel="noopener">Unirse al Discord →</a>
+      <a class="btn btn-ghost" href="#corporaciones">Ver corporaciones</a>
+    </div>
+  </div>
+  <div class="coords mono">
+    <span>40.4168° N, 3.7038° O</span>
+    <span>MADRID · ESPAÑA</span>
+    <span id="clock">--:--:--</span>
+  </div>
+</section>
+
+<section id="corporaciones">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-tag">corporaciones activas</span>
+      <h2 class="section-title">Unidades desplegadas en Madrid</h2>
+    </div>
+    <div class="corp-grid reveal">
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-01 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5l8-3z"/></svg></div>
+        <div class="corp-name">Policía Nacional</div>
+        <div class="corp-abbr">CNP</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-02 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.6 5.6 6.1.6-4.6 4.1 1.4 6-5.5-3.2-5.5 3.2 1.4-6-4.6-4.1 6.1-.6z"/></svg></div>
+        <div class="corp-name">Guardia Civil</div>
+        <div class="corp-abbr">GC</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-03 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21V9l8-5 8 5v12M4 21h16M9 21v-6h6v6"/></svg></div>
+        <div class="corp-name">Policía Municipal</div>
+        <div class="corp-abbr">PMM</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-04 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2c-1.5 3-4 4.8-4 8.5A4 4 0 0012 15a4 4 0 004-4.5C16 7.5 13.5 5 12 2z"/></svg></div>
+        <div class="corp-name">Bomberos de Madrid</div>
+        <div class="corp-abbr">BOMBEROS</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-05 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.6-9.3-9C1.2 8.7 3 5 6.5 5 9 5 10.6 7 12 8.5 13.4 7 15 5 17.5 5 21 5 22.8 8.7 21.3 12 19 16.4 12 21 12 21z"/><path d="M4 12h4l1.5-3L11 15l1.5-3H20"/></svg></div>
+        <div class="corp-name">SAMUR</div>
+        <div class="corp-abbr">Protección Civil</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-06 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v6M12 22v-6M2 12h6M22 12h-6M5 5l4 4M19 19l-4-4M5 19l4-4M19 5l-4 4"/></svg></div>
+        <div class="corp-name">SUMMA 112</div>
+        <div class="corp-abbr">EMERGENCIAS</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-code">UNIDAD-07 · OPERATIVA</div>
+        <div class="corp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C7 2 4 6 4 10c0 6 8 12 8 12s8-6 8-12c0-4-3-8-8-8z"/><path d="M9 11c1 1 5 1 6 0"/></svg></div>
+        <div class="corp-name">Conservación</div>
+        <div class="corp-abbr">MEDIO AMBIENTE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-tag">estado del sistema</span>
+      <h2 class="section-title">Qué ofrecemos</h2>
+    </div>
+    <div class="panel reveal">
+      <div class="panel-header">
+        <span>PANEL_MADRID_RP.SYS</span>
+        <div class="lights"><span></span><span></span><span></span></div>
+      </div>
+      <ul class="status-list">
+        <li>Staff activo y comprometido <span class="status-ok">operativo</span></li>
+        <li>Bots y sistemas propios <span class="status-ok">operativo</span></li>
+        <li>Texturas profesionales <span class="status-ok">operativo</span></li>
+        <li>Eventos serios y con coherencia <span class="status-ok">operativo</span></li>
+        <li>Sistema de atención avanzado <span class="status-ok">operativo</span></li>
+        <li>Una comunidad activa <span class="status-ok">operativo</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-tag">requisitos de reclutamiento</span>
+      <h2 class="section-title">Qué buscamos</h2>
+    </div>
+    <div class="terminal reveal">
+      <div class="terminal-bar">
+        <span></span><span></span><span></span>
+        <span class="path">reclutamiento@madridrp:~</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> buscar --perfil</div>
+        <div class="req">Miembros activos</div>
+        <div class="req">Personas maduras y serias</div>
+        <div class="req">Policías y médicos</div>
+        <div class="req">Alianzas con servidores muy activos</div>
+        <div style="margin-top:8px;"><span class="prompt">$</span> filtro aplicado: <span style="color:var(--amber)">calidad</span> &gt; cantidad<span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="broadcast">
+  <div class="broadcast-tag"><span class="dot"></span> TRANSMISIÓN ABIERTA</div>
+  <h2>¿Listo para formar parte de Madrid?</h2>
+  <p>Únete a nuestra comunidad y comienza tu experiencia en ERLC.</p>
+  <a class="btn btn-primary" href="https://discord.gg/9mbXYtEP9" target="_blank" rel="noopener">Entrar al servidor →</a>
+  <span class="discord-link">discord.gg/9mbXYtEP9</span>
+</section>
+
+<footer>
+  MADRID RP · ERLC 2026 — RP | ESP
+</footer>
+
+<script>
+  // ticker content
+  const ticker = document.getElementById('ticker');
+  const items = ['CNP · ACTIVA','GC · ACTIVA','PMM · ACTIVA','BOMBEROS · ACTIVA','SAMUR · ACTIVA','SUMMA 112 · ACTIVA','CONSERVACIÓN · ACTIVA','MADRID RP · ERLC 2026'];
+  const doubled = [...items, ...items];
+  ticker.innerHTML = doubled.map(t => `<span>${t}</span>`).join('');
+
+  // decorative rings
+  const rings = document.getElementById('rings');
+  [260, 460, 680].forEach(size => {
+    const d = document.createElement('div');
+    d.style.width = size + 'px';
+    d.style.height = size + 'px';
+    rings.appendChild(d);
+  });
+
+  // clock (Madrid local time feel)
+  function tick(){
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  }
+  tick(); setInterval(tick, 1000);
+
+  // reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
